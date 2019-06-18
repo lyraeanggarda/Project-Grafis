@@ -1,141 +1,287 @@
-#include "windows.h"
-#include "GL/glut.h"
-#include "stdio.h"
+/*
+ * GLUT Shapes Demo
+ *
+ * Written by Nigel Stewart November 2003
+ *
+ * This program is test harness for the sphere, cone
+ * and torus shapes in GLUT.
+ *
+ * Spinning wireframe and smooth shaded shapes are
+ * displayed until the ESC or q key is pressed.  The
+ * number of geometry stacks and slices can be adjusted
+ * using the + and - keys.
+ */
 
-float view_rotx = 0.0f, view_roty = 180.0f;
-float R_Z=0.0f, R_X=0.0f, R_Y=0.0f;
-     float T_Z=-4.0f, T_X=0.0f, T_Y=-0.0f;
+#ifdef __APPLE__
+#include <GLUT/glut.h>
+#else
+#include <GL/glut.h>
+#endif
 
-int oldMouseX, oldMouseY;
+#include <stdlib.h>
+#include <math.h>
 
-void initGL(){
-glShadeModel(GL_FLAT);
+// angle of rotation for the camera direction
+float angle = 0.0f;
+// actual vector representing the camera's direction
+float lx=0.0f,lz=-1.0f;
+// XZ position of the camera
+float x=0.0f, z=5.0f;
+// the key states. These variables will be zero
+//when no key is being presses
+float deltaAngle = 0.0f;
+float deltaMove = 0;
+int xOrigin = -1;
 
- float ambient[] = {1.0f,1.0f,1.0f,1.0f};
- float diffuse[] = {1.0f,1.0f,1.0f,1.0f};
- float specular[] = {0.2f,1.0f,0.2f,1.0f};
- float position[] = {20.0f,30.0f,20.0f,0.0f};
+/* GLUT callback Handlers */
 
- glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
- glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
- glLightfv(GL_LIGHT0, GL_POSITION, position);
- glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
+static void resize(int width, int height)
+{
+    const float ar = (float) width / (float) height;
 
- float mambient[] ={0.1745f, 0.01175f, 0.01175f, 0.55f};
- float mdiffuse[] ={0.61424f, 0.04136f, 0.04136f, 0.55f };
- float mspecular[] ={0.727811f, 0.626959f, 0.626959f, 0.55f };
- float mshine =76.8f;
+    glViewport(0, 0, width, height);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glFrustum(-ar, ar, -1.0, 1.0, 2.0, 100.0);
 
- glMaterialfv(GL_FRONT,GL_AMBIENT,mambient);
- glMaterialfv(GL_FRONT,GL_DIFFUSE,mdiffuse);
-        glMaterialfv(GL_FRONT,GL_SPECULAR,mspecular);
-        glMaterialf (GL_FRONT,GL_SHININESS,mshine);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity() ;
+}
+void processNormalKeys(unsigned char key, int xx, int yy) {
 
-        glEnable(GL_LIGHTING);
-        glEnable(GL_LIGHT0);
-        glEnable(GL_DEPTH_TEST);
-        glEnable(GL_NORMALIZE);
-    }
+        if (key == 27)
+              exit(0);
+}
+void pressKey(int key, int xx, int yy) {
 
-    void prism_polygon(){
-        // PRISMA SEGITIGA
-        glBegin(GL_POLYGON);/* ABC */
-            //s1
-            glVertex3f(0.0f,0.0f,-1.0f); //B
-            glVertex3f(1.0f,0.0f,0.0f);  //C
-            glVertex3f(-1.0f,0.0f,0.0f); //A
-            glVertex3f(0.0f,0.0f,-1.0f);
-        glEnd();
+       switch (key) {
+             case GLUT_KEY_UP : deltaMove = 0.5f; break;
+             case GLUT_KEY_DOWN : deltaMove = -0.5f; break;
+       }
+}
 
-        glBegin(GL_POLYGON);/* DEF */
-            //s1
-            glVertex3f(0.0f,1.0f,-1.0f); //E
-            glVertex3f(1.0f,1.0f,0.0f); //F
-            glVertex3f(-1.0f,1.0f,0.0f); //D
-            glVertex3f(0.0f,1.0f,-1.0f);
-        glEnd();
+void releaseKey(int key, int x, int y) {
 
-        glBegin(GL_POLYGON);/* ABED */
-            //s1
-            glVertex3f(-1.0f,0.0f,0.0f); //A
-            glVertex3f(0.0f,0.0f,-1.0f); //B
-            glVertex3f(0.0f,1.0f,-1.0f); //E
-            glVertex3f(-1.0f,1.0f,0.0f); //D
-        glEnd();
+        switch (key) {
+             case GLUT_KEY_UP :
+             case GLUT_KEY_DOWN : deltaMove = 0;break;
+        }
+}
+void mouseButton(int button, int state, int x, int y) {
 
-        glBegin(GL_POLYGON);/* BCFE */
-            //s1
-            glVertex3f(0.0f,0.0f,-1.0f); //B
-            glVertex3f(1.0f,0.0f,0.0f);  //C
-            glVertex3f(1.0f,1.0f,0.0f); //F
-            glVertex3f(0.0f,1.0f,-1.0f); //E
-        glEnd();
+	// only start motion if the left button is pressed
+	if (button == GLUT_LEFT_BUTTON) {
 
-        glBegin(GL_POLYGON);/* ACFD */
-            //s1
-            glVertex3f(-1.0f,0.0f,0.0f); //A
-            glVertex3f(1.0f,0.0f,0.0f);  //C
-            glVertex3f(1.0f,1.0f,0.0f); //F
-            glVertex3f(-1.0f,1.0f,0.0f); //D
-        glEnd();
-    }
+		// when the button is released
+		if (state == GLUT_UP) {
+			angle += deltaAngle;
+			xOrigin = -1;
+		}
+		else  {// state = GLUT_DOWN
+			xOrigin = x;
+		}
+	}
+}
+void mouseMove(int x, int y) {
 
-    void display_prism_polygon(){
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glLoadIdentity();
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-        glTranslatef(0,0.0f, -5.0f);
-        glRotatef(view_rotx, 1.0f, 0.0f, 0.0f);
-        glRotatef(view_roty, 0.0f, 1.0f, 0.0f);
-        glRotatef(10.0f, 0.0f, 1.0f, 0.0f);// ROTATE 10 DERAJAT
-        prism_polygon();
-        glFlush();
-        glutSwapBuffers();
-    }
+	// this will only be true when the left button is down
+	if (xOrigin >= 0) {
 
-    void timer(int value){
-         glutPostRedisplay();
-         glutTimerFunc(15, timer, 0);
-     }
+		// update deltaAngle
+		deltaAngle = (x - xOrigin) * 0.001f;
 
-    void mouseControl(int button, int state, int x, int y){
-        oldMouseX = x;
-        oldMouseY = y;
-    }
+		// update camera's direction
+		lx = sin(angle + deltaAngle);
+		lz = -cos(angle + deltaAngle);
+	}
+}
+void computePos(float deltaMove) {
 
-    void mouseMotion(int x, int y){
-        int getX = x;
-        int getY = y;
-        float thetaY = 360.0f*(getX - oldMouseX)/640;
-        float thetaX = 360.0f*(getY - oldMouseY)/480;
-        oldMouseX = getX;
-        oldMouseY = getY;
-        view_rotx += thetaX;
-        view_roty += thetaY;
-    }
-     void reshape(GLsizei width, GLsizei height){
-         if (height == 0) height = 1;
-         GLfloat aspect = (GLfloat)width / (GLfloat)height;
-        glViewport(30, 6, width, height);
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        gluPerspective(45.0f, aspect, 1.0f, 20.0f);
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-    }
+	x += deltaMove * lx * 0.1f;
+	z += deltaMove * lz * 0.1f;
+}
+void alas(){
+    glBegin(GL_QUADS);
+      glColor3f(0.0f, 0.4f, 0.0f);
+      glVertex3f( 1.0f, 0.2f, -1.0f);
+      glVertex3f(-1.0f, 0.2f, -1.0f);
+      glVertex3f(-1.0f, 0.2f,  1.0f);
+      glVertex3f( 1.0f, 0.2f,  1.0f);
 
-    int main(int argc, char **argv){
-        glutInit(&argc, argv);
-        glutInitDisplayMode(GLUT_DOUBLE | GLUT_DEPTH);
-        glutInitWindowSize(920, 640);
-        glutInitWindowPosition(50, 50);
-        glutCreateWindow("prism polygon");
-        glutDisplayFunc(display_prism_polygon);
-        glutReshapeFunc(reshape);
-        initGL();
-        glutMouseFunc(mouseControl);
-        glutMotionFunc(mouseMotion);
-        glutTimerFunc(0, timer, 0);
-        glutMainLoop();
-        return 0;
-    }
+      glVertex3f( 1.0f, -0.2f,  1.0f);
+      glVertex3f(-1.0f, -0.2f,  1.0f);
+      glVertex3f(-1.0f, -0.2f, -1.0f);
+      glVertex3f( 1.0f, -0.2f, -1.0f);
+
+      glVertex3f( 1.0f,  0.2f, 1.0f);
+      glVertex3f(-1.0f,  0.2f, 1.0f);
+      glVertex3f(-1.0f, -0.2f, 1.0f);
+      glVertex3f( 1.0f, -0.2f, 1.0f);
+
+      glVertex3f( 1.0f, -0.2f, -1.0f);
+      glVertex3f(-1.0f, -0.2f, -1.0f);
+      glVertex3f(-1.0f,  0.2f, -1.0f);
+      glVertex3f( 1.0f,  0.2f, -1.0f);
+
+      glVertex3f(-1.0f,  0.2f,  1.0f);
+      glVertex3f(-1.0f,  0.2f, -1.0f);
+      glVertex3f(-1.0f, -0.2f, -1.0f);
+      glVertex3f(-1.0f, -0.2f,  1.0f);
+
+      glVertex3f(1.0f,  0.2f, -1.0f);
+      glVertex3f(1.0f,  0.2f,  1.0f);
+      glVertex3f(1.0f, -0.2f,  1.0f);
+      glVertex3f(1.0f, -0.2f, -1.0f);
+   glEnd();
+}
+void ram(){
+    glBegin(GL_QUADS);
+      glColor3f(0.0f, 0.0f, 0.0f);
+      glVertex3f( 0.05f,  0.0f, -0.7f);
+      glVertex3f(-0.05f,  0.0f, -0.7f);
+      glVertex3f(-0.05f,  0.0f,  0.7f);
+      glVertex3f( 0.05f,  0.0f,  0.7f);
+
+      glVertex3f( 0.05f, -0.0f,  0.7f);
+      glVertex3f(-0.05f, -0.0f,  0.7f);
+      glVertex3f(-0.05f, -0.0f, -0.7f);
+      glVertex3f( 0.05f, -0.0f, -0.7f);
+
+      glVertex3f( 0.05f,  0.0f,  0.7f);
+      glVertex3f(-0.05f,  0.0f,  0.7f);
+      glVertex3f(-0.05f, -0.0f,  0.7f);
+      glVertex3f( 0.05f, -0.0f,  0.7f);
+
+      glVertex3f( 0.05f, -0.0f, -0.7f);
+      glVertex3f(-0.05f, -0.0f, -0.7f);
+      glVertex3f(-0.05f,  0.0f, -0.7f);
+      glVertex3f( 0.05f,  0.0f, -0.7f);
+
+      glVertex3f(-0.05f,  0.0f,  0.7f);
+      glVertex3f(-0.05f,  0.0f, -0.7f);
+      glVertex3f(-0.05f, -0.0f, -0.7f);
+      glVertex3f(-0.05f, -0.0f,  0.7f);
+
+      glVertex3f( 0.05f,  0.0f, -0.7f);
+      glVertex3f( 0.05f,  0.0f,  0.7f);
+      glVertex3f( 0.05f, -0.0f,  0.7f);
+      glVertex3f( 0.05f, -0.0f, -0.7f);
+   glEnd();
+}
+void procie(){
+    glBegin(GL_QUADS);
+      glColor3f(0.8f, 0.8f, 0.8f);
+      glVertex3f( 0.3f,  0.0f, -0.3f);
+      glVertex3f(-0.3f,  0.0f, -0.3f);
+      glVertex3f(-0.3f,  0.0f,  0.3f);
+      glVertex3f( 0.3f,  0.0f,  0.3f);
+
+      glVertex3f( 0.3f, -0.0f,  0.3f);
+      glVertex3f(-0.3f, -0.0f,  0.3f);
+      glVertex3f(-0.3f, -0.0f, -0.3f);
+      glVertex3f( 0.3f, -0.0f, -0.3f);
+
+      glVertex3f( 0.3f,  0.0f,  0.3f);
+      glVertex3f(-0.3f,  0.0f,  0.3f);
+      glVertex3f(-0.3f, -0.0f,  0.3f);
+      glVertex3f( 0.3f, -0.0f,  0.3f);
+
+      glVertex3f( 0.3f, -0.0f, -0.3f);
+      glVertex3f(-0.3f, -0.0f, -0.3f);
+      glVertex3f(-0.3f,  0.0f, -0.3f);
+      glVertex3f( 0.3f,  0.0f, -0.3f);
+
+      glVertex3f(-0.3f,  0.0f,  0.3f);
+      glVertex3f(-0.3f,  0.0f, -0.3f);
+      glVertex3f(-0.3f, -0.0f, -0.3f);
+      glVertex3f(-0.3f, -0.0f,  0.3f);
+
+      glVertex3f( 0.3f,  0.0f, -0.3f);
+      glVertex3f( 0.3f,  0.0f,  0.3f);
+      glVertex3f( 0.3f, -0.0f,  0.3f);
+      glVertex3f( 0.3f, -0.0f, -0.3f);
+   glEnd();
+}
+static void display(void)
+{
+    const double t = glutGet(GLUT_ELAPSED_TIME) / 1000.0;
+    const double a = t*90.0;
+    if (deltaMove)
+		computePos(deltaMove);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	// Reset transformations
+	glLoadIdentity();
+	// Set the camera
+	gluLookAt(	x, 1.0f, z,
+			x+lx, 1.0f,  z+lz,
+			0.0f, 1.0f,  0.0f);
+    glColor3d(1,0,0);
+
+    glPushMatrix();
+        glRotated(60,1,0,0);
+        alas();
+    glPopMatrix();
+    glPushMatrix();
+        glTranslatef(0.6f, 0.0f, 0.0f);
+        glRotated(60,1,0,0);
+        ram();
+    glPopMatrix();
+    glPushMatrix();
+        glTranslatef(0.8f, 0.0f, 0.0f);
+        glRotated(60,1,0,0);
+        ram();
+    glPopMatrix();
+    glPushMatrix();
+        glTranslatef(-0.1f, 0.4f, 0.0f);
+        glRotated(60,1,0,0);
+        procie();
+    glPopMatrix();
+    glutSwapBuffers();
+
+}
+
+
+
+static void idle(void)
+{
+    glutPostRedisplay();
+}
+
+const GLfloat light_ambient[]  = { 0.0f, 0.0f, 0.0f, 1.0f };
+const GLfloat light_diffuse[]  = { 1.0f, 1.0f, 1.0f, 1.0f };
+const GLfloat light_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+const GLfloat light_position[] = { 2.0f, 5.0f, 5.0f, 0.0f };
+
+const GLfloat mat_ambient[]    = { 0.7f, 0.7f, 0.7f, 1.0f };
+const GLfloat mat_diffuse[]    = { 0.8f, 0.8f, 0.8f, 1.0f };
+const GLfloat mat_specular[]   = { 1.0f, 1.0f, 1.0f, 1.0f };
+const GLfloat high_shininess[] = { 100.0f };
+
+/* Program entry point */
+
+int main(int argc, char *argv[])
+{
+    glutInit(&argc, argv);
+    glutInitWindowSize(640,480);
+    glutInitWindowPosition(10,10);
+    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
+
+    glutCreateWindow("GLUT Shapes");
+
+    glutReshapeFunc(resize);
+    glutDisplayFunc(display);
+    glutIdleFunc(idle);
+
+    glClearColor(1,1,1,1);
+    glutIgnoreKeyRepeat(1);
+	glutKeyboardFunc(processNormalKeys);
+	glutSpecialFunc(pressKey);
+	glutSpecialUpFunc(releaseKey);
+
+	// here are the two new functions
+	glutMouseFunc(mouseButton);
+	glutMotionFunc(mouseMove);
+    glutMainLoop();
+
+    return EXIT_SUCCESS;
+}
