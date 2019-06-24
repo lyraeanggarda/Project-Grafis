@@ -12,12 +12,26 @@
  * using the + and - keys.
  */
 
+/*
+ * GLUT Shapes Demo
+ *
+ * Written by Nigel Stewart November 2003
+ *
+ * This program is test harness for the sphere, cone
+ * and torus shapes in GLUT.
+ *
+ * Spinning wireframe and smooth shaded shapes are
+ * displayed until the ESC or q key is pressed.  The
+ * number of geometry stacks and slices can be adjusted
+ * using the + and - keys.
+ */
+
+#include <windows.h>
 #ifdef __APPLE__
 #include <GLUT/glut.h>
 #else
 #include <GL/glut.h>
 #endif
-
 #include <stdlib.h>
 #include <math.h>
 
@@ -100,6 +114,9 @@ void computePos(float deltaMove) {
 	x += deltaMove * lx * 0.1f;
 	z += deltaMove * lz * 0.1f;
 }
+
+
+
 void alas(){
     glBegin(GL_QUADS);
       glColor3f(0.0f, 0.4f, 0.0f);
@@ -202,20 +219,167 @@ void procie(){
       glVertex3f( 0.3f, -0.0f, -0.3f);
    glEnd();
 }
-static void display(void)
-{
-    const double t = glutGet(GLUT_ELAPSED_TIME) / 1000.0;
-    const double a = t*90.0;
-    if (deltaMove)
-		computePos(deltaMove);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	// Reset transformations
-	glLoadIdentity();
-	// Set the camera
-	gluLookAt(	x, 1.0f, z,
-			x+lx, 1.0f,  z+lz,
-			0.0f, 1.0f,  0.0f);
-    glColor3d(1,0,0);
+
+void kompcu(){
+    glBegin(GL_QUADS);
+      glColor3f(1.0f, 0.0f, 0.0f);
+      glVertex3f(0.0f,  0.0f, 0.0f);
+      glVertex3f(0.0f,  0.0f, 0.5f);
+      glVertex3f(0.5f,  0.0f, 0.5f);
+      glVertex3f(0.5f,  0.0f, 0.0f);
+
+      glVertex3f(0.0f,  0.1f, 0.0f);
+      glVertex3f(0.0f,  0.1f, 0.5f);
+      glVertex3f(0.5f,  0.1f, 0.5f);
+      glVertex3f(0.5f,  0.1f, 0.0f);
+
+      glColor3f(0.0f, 0.1f, 0.0f);
+      glVertex3f(0.0f,  0.0f, 0.0f);
+      glVertex3f(0.0f,  0.0f, 0.5f);
+      glVertex3f(0.0f,  0.1f, 0.5f);
+      glVertex3f(0.0f,  0.1f, 0.0f);
+
+      glVertex3f(0.5f,  0.0f, 0.0f);
+      glVertex3f(0.5f,  0.0f, 0.5f);
+      glVertex3f(0.5f,  0.1f, 0.5f);
+      glVertex3f(0.5f,  0.1f, 0.0f);
+
+    glEnd();
+}
+
+void GoldPin(){
+    glColor3d(0.7,0.7,0.0);
+    glTranslated(0,0,-0.03);
+    /*glRotated(90,0,0,1);
+    glTranslated(0,0,-0.1);
+    qobj = gluNewQuadric();
+    gluQuadricDrawStyle(qobj,GLU_FILL);
+    gluCylinder(qobj,0.05,0.05,0.05,30,30);*/
+
+    glBegin(GL_QUADS);
+        glVertex3f(0.02,0.02,0.0); //A
+        glVertex3f(0.02,0.04,0.0); //B
+        glVertex3f(0.04,0.04,0.0); //C
+        glVertex3f(0.04,0.02,0.0); //D
+    glEnd();
+    glBegin(GL_QUADS);
+        glVertex3f(0.02,0.02,0.05); //A+
+        glVertex3f(0.02,0.04,0.05); //B+
+        glVertex3f(0.04,0.04,0.05); //C+
+        glVertex3f(0.04,0.02,0.05); //D+
+    glEnd();
+    glBegin(GL_QUADS);
+        glVertex3f(0.02,0.02,0.0); //A
+        glVertex3f(0.02,0.04,0.0); //B
+        glVertex3f(0.02,0.04,0.05); //B+
+        glVertex3f(0.02,0.02,0.05); //A+
+
+        glVertex3f(0.04,0.04,0.0); //C
+        glVertex3f(0.04,0.02,0.0); //D
+        glVertex3f(0.04,0.02,0.05); //D+
+        glVertex3f(0.04,0.04,0.05); //C+
+
+        glVertex3f(0.02,0.04,0.0); //B
+        glVertex3f(0.04,0.04,0.0); //C
+        glVertex3f(0.04,0.04,0.05); //C+
+        glVertex3f(0.02,0.04,0.05); //B+
+
+        glVertex3f(0.02,0.02,0.0); //A
+        glVertex3f(0.04,0.02,0.0); //D
+        glVertex3f(0.04,0.02,0.05); //D+
+        glVertex3f(0.02,0.02,0.05); //A+
+    glEnd();
+}
+
+void AlasProc(){
+    glColor3d(0.0,0.3,0.1);
+    glBegin(GL_QUADS);
+        glVertex3f(0.0f,0.0f,0.0f); //A
+        glVertex3f(0.0f,0.4f,0.0f); //B
+        glVertex3f(0.4f,0.4f,0.0f); //C
+        glVertex3f(0.4f,0.0f,0.0f); //D
+
+        glVertex3f(0.0f,0.0f,0.05f); //A+
+        glVertex3f(0.0f,0.4f,0.05f); //B+
+        glVertex3f(0.4f,0.4f,0.05f); //C+
+        glVertex3f(0.4f,0.0f,0.05f); //D+
+
+        glVertex3f(0.0f,0.0f,0.0f); //A
+        glVertex3f(0.0f,0.4f,0.0f); //B
+        glVertex3f(0.0f,0.4f,0.05f); //B+
+        glVertex3f(0.0f,0.0f,0.05f); //A+
+
+        glVertex3f(0.4f,0.4f,0.0f); //C
+        glVertex3f(0.4f,0.0f,0.0f); //D
+        glVertex3f(0.4f,0.0f,0.05f); //D+
+        glVertex3f(0.4f,0.4f,0.05f); //C+
+
+        glVertex3f(0.0f,0.4f,0.0f); //B
+        glVertex3f(0.4f,0.4f,0.0f); //C
+        glVertex3f(0.4f,0.4f,0.05f); //C+
+        glVertex3f(0.0f,0.4f,0.05f); //B+
+
+        glVertex3f(0.0f,0.0f,0.0f); //A
+        glVertex3f(0.4f,0.0f,0.0f); //D
+        glVertex3f(0.4f,0.0f,0.05f); //D+
+        glVertex3f(0.0f,0.0f,0.05f); //A+
+    glEnd();
+}
+
+void KepalaProc(){
+    glColor3d(0.3,0.3,0.3);
+    glBegin(GL_QUADS);
+        glVertex3f(0.05f,0.05f,0.05f); //A
+        glVertex3f(0.05f,0.35f,0.05f); //B
+        glVertex3f(0.35f,0.35f,0.05f); //C
+        glVertex3f(0.35f,0.05f,0.05f); //D
+
+        glVertex3f(0.05f,0.05f,0.1f); //A+
+        glVertex3f(0.05f,0.35f,0.1f); //B+
+        glVertex3f(0.35f,0.35f,0.1f); //C+
+        glVertex3f(0.35f,0.05f,0.1f); //D+
+
+        glVertex3f(0.05f,0.05f,0.05f); //A
+        glVertex3f(0.05f,0.35f,0.05f); //B
+        glVertex3f(0.05f,0.35f,0.1f); //B+
+        glVertex3f(0.05f,0.05f,0.1f); //A+
+
+        glVertex3f(0.35f,0.35f,0.05f); //C
+        glVertex3f(0.35f,0.05f,0.05f); //D
+        glVertex3f(0.35f,0.05f,0.1f); //D+
+        glVertex3f(0.35f,0.35f,0.1f); //C+
+
+        glVertex3f(0.05f,0.35f,0.05f); //B
+        glVertex3f(0.35f,0.35f,0.05f); //C
+        glVertex3f(0.35f,0.35f,0.1f); //C+
+        glVertex3f(0.05f,0.35f,0.1f); //B+
+
+        glVertex3f(0.05f,0.05f,0.05f); //A
+        glVertex3f(0.35f,0.05f,0.05f); //D
+        glVertex3f(0.35f,0.05f,0.1f); //D+
+        glVertex3f(0.05f,0.05f,0.1f); //A+
+    glEnd();
+}
+
+void Proc(){
+ AlasProc();
+ KepalaProc();
+
+ float tx=0.0f,ty=0.0f;
+ for(int y=0;y<=11;y++){
+    for(int x=0;x<=11;x++){
+        glPushMatrix();
+        glTranslatef(tx,ty,0);
+        GoldPin();
+        glPopMatrix();
+        tx+=0.03;
+    }
+    tx=0.0f;
+    ty+=0.03;
+ }
+}
+
+void Mobo(){
 
     glPushMatrix();
         glRotated(60,1,0,0);
@@ -236,6 +400,32 @@ static void display(void)
         glRotated(60,1,0,0);
         procie();
     glPopMatrix();
+    }
+static void display(void)
+{
+    const double t = glutGet(GLUT_ELAPSED_TIME) / 1000.0;
+    const double a = t*90.0;
+    if (deltaMove)
+		computePos(deltaMove);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	// Reset transformations
+	glLoadIdentity();
+	// Set the camera
+	gluLookAt(	x, 1.0f, z,
+			x+lx, 1.0f,  z+lz,
+			0.0f, 1.0f,  0.0f);
+    glColor3d(1,0,0);
+
+    Mobo();
+    //kompcu();
+    glPushMatrix();
+    glRotated(30,1,0,0);
+    glTranslatef(-0.3f,0.3f,0.0f);
+    Proc();
+    glPopMatrix();
+
+
+
     glutSwapBuffers();
 
 }
@@ -285,3 +475,5 @@ int main(int argc, char *argv[])
 
     return EXIT_SUCCESS;
 }
+
+
