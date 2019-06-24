@@ -13,44 +13,6 @@ using namespace std;
 bool power = false;
 float posX = 0.0f, posY = 0.0f, posZ = -5.0f;
 
-void keyFunction(unsigned char key, int x, int y){
-    switch(key){
-        case 73: // I
-            power = true;
-        break;
-        case 79: // O
-            while (posY > 0) {
-                keyFunction('L', 0, 0);
-            }
-
-            power = false;
-        break;
-        case 75: // K
-            if (power == true)
-                posY += 0.2f;
-        break;
-        case 76: // L
-            if (power == true)
-                posY -= 0.2f;
-        break;
-        case 87: // W
-            if (power == true)
-                posZ -= 0.2f;
-        break;
-        case 83: // S
-            if (power == true)
-                posZ += 0.2f;
-        break;
-        case 65: // A
-            if (power == true)
-                posX -= 0.2f;
-        break;
-        case 68: // D
-            if (power == true)
-                posX += 0.2f;
-        break;
-    }
-}
 
 void initGL()
 {
@@ -310,7 +272,26 @@ void KepalaProc(){
     glEnd();
 }
 
+float procY=0.0f;
+bool status = false;
+void CopotProc(){
+    int panjang;
+
+    if(!status){
+        status = true;
+        for(panjang=0; panjang<=5; panjang++){
+            procY+=0.1;
+        }
+    }
+    else{
+        status = false;
+        for(panjang=0; panjang<=5; panjang++){
+            procY-=0.1;
+        }
+    }
+}
 void Proc(){
+ glTranslatef(0.0f,procY,0.0f);
  AlasProc();
  KepalaProc();
 
@@ -351,6 +332,48 @@ void Mobo(){
     glPopMatrix();
     }
 
+void keyFunction(unsigned char key, int x, int y){
+    switch(key){
+        case 73: // I
+            power = true;
+        break;
+        case 79: // O
+            while (posY > 0) {
+                keyFunction('L', 0, 0);
+            }
+
+            power = false;
+        break;
+        case 75: // K
+            if (power == true)
+                posY += 0.2f;
+        break;
+        case 76: // L
+            if (power == true)
+                posY -= 0.2f;
+        break;
+        case 87: // W
+            if (power == true)
+                posZ -= 0.2f;
+        break;
+        case 83: // S
+            if (power == true)
+                posZ += 0.2f;
+        break;
+        case 65: // A
+            if (power == true)
+                posX -= 0.2f;
+        break;
+        case 68: // D
+            if (power == true)
+                posX += 0.2f;
+        break;
+        case 67: //c
+            CopotProc();
+        break;
+    }
+}
+
 
 GLfloat angle = 0.0f;
 void display()
@@ -365,8 +388,8 @@ void display()
     Mobo();
     //kompcu();
     glPushMatrix();
-    glRotated(30,1,0,0);
-    glTranslatef(-0.3f,0.3f,0.0f);
+    glRotated(-30,1,0,0);
+    glTranslatef(-0.3f,-0.4f,1.0f);
     Proc();
     glPopMatrix();
 
