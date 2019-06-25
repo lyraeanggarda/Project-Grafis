@@ -4,7 +4,7 @@
 #else
 #include <GL/glut.h>
 #endif
-
+#include <stdint.h>
 #include <stdlib.h>
 #include "math.h"
 #include <iostream>
