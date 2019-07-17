@@ -369,7 +369,8 @@
 	"math.h"
 	<iostream>
 
-1562489896 source:c:\users\lyrae anggarda\documents\github\project-grafis\main.cpp
+1563354778 source:c:\users\lyrae anggarda\documents\github\project-grafis\main.cpp
+	<windows.h>
 	<GLUT/glut.h>
 	<GL/glut.h>
 	<stdlib.h>

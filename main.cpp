@@ -11,7 +11,7 @@
  * number of geometry stacks and slices can be adjusted
  * using the + and - keys.
  */
-
+#include <windows.h>
 #ifdef __APPLE__
 #include <GLUT/glut.h>
 #else
@@ -19,7 +19,8 @@
 #endif
 
 #include <stdlib.h>
-
+float sudut_ba=0;
+boolean status_kipas = false;
 static int slices = 16;
 static int stacks = 16;
 
@@ -33,31 +34,6 @@ void initGL()
   glDepthFunc(GL_LEQUAL);
   glShadeModel(GL_SMOOTH);
   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-
-    GLfloat light_ambient[]  = { 0.0f, 0.0f, 0.0f, 1.0f };
-    GLfloat light_diffuse[]  = { 1.0f, 1.0f, 1.0f, 1.0f };
-    GLfloat light_specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-    GLfloat light_position[] = { 2.0f, 5.0f, 5.0f, 0.0f };
-
-    glLightfv(GL_LIGHT0, GL_AMBIENT,  light_ambient);
-    glLightfv(GL_LIGHT0, GL_DIFFUSE,  light_diffuse);
-    glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
-    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-
-    GLfloat mat_ambient[]    = { 0.7f, 0.7f, 0.7f, 1.0f };
-    GLfloat mat_diffuse[]    = { 0.8f, 0.8f, 0.8f, 1.0f };
-    GLfloat mat_specular[]   = { 1.0f, 1.0f, 1.0f, 1.0f };
-    GLfloat high_shininess[] = { 100.0f };
-
-    glMaterialfv(GL_FRONT, GL_AMBIENT,   mat_ambient);
-    glMaterialfv(GL_FRONT, GL_DIFFUSE,   mat_diffuse);
-    glMaterialfv(GL_FRONT, GL_SPECULAR,  mat_specular);
-    glMaterialfv(GL_FRONT, GL_SHININESS, high_shininess);
-
-    glEnable(GL_LIGHT0);
-    glEnable(GL_NORMALIZE);
-    glEnable(GL_COLOR_MATERIAL);
-    glEnable(GL_LIGHTING);
 }
 
 static void resize(int width, int height)
@@ -71,6 +47,21 @@ static void resize(int width, int height)
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity() ;
+}
+
+void reshape(GLsizei width, GLsizei height) {  // GLsizei for non-negative integer
+   // Compute aspect ratio of the new window
+   if (height == 0) height = 1;                // To prevent divide by 0
+   GLfloat aspect = (GLfloat)width / (GLfloat)height;
+
+   // Set the viewport to cover the new window
+   glViewport(0, 0, width, height);
+
+   // Set the aspect ratio of the clipping volume to match the viewport
+   glMatrixMode(GL_PROJECTION);  // To operate on the Projection matrix
+   glLoadIdentity();             // Reset
+   // Enable perspective projection with fovy, aspect, zNear and zFar
+   gluPerspective(45.0f, aspect, 0.1f, 100.0f);
 }
 
 void mobo(){
@@ -125,10 +116,6 @@ void mobo(){
 
 void cpu(){
     glBegin(GL_QUADS);
-//        glVertex3f(0.0f, 0.0f, 0.0f);
-//        glVertex3f(0.4f, 0.0f, 0.0f);
-//        glVertex3f(0.4f, 0.4f, 0.0f);
-//        glVertex3f(0.0f, 0.4f, 0.0f);
 
         glVertex3f( 0.4f,  0.4f,  0.0f);
         glVertex3f( 0.0f,  0.4f,  0.0f);
@@ -200,81 +187,128 @@ void ram(){
 
 void vga(){
     glBegin(GL_QUADS);
-        glVertex3f( 0.9f,  0.07f,  0.0f);
+        glVertex3f( 0.5f,  0.07f,  0.0f);
         glVertex3f( 0.0f,  0.07f,  0.0f);
         glVertex3f( 0.0f,  0.07f,  0.1f);
-        glVertex3f( 0.9f,  0.07f,  0.1f);
+        glVertex3f( 0.5f,  0.07f,  0.1f);
 
-        glVertex3f( 0.9f,  0.00f,  0.1f);
+        glVertex3f( 0.5f,  0.00f,  0.1f);
         glVertex3f( 0.0f,  0.00f,  0.1f);
         glVertex3f( 0.0f,  0.00f,  0.0f);
-        glVertex3f( 0.9f,  0.00f,  0.0f);
+        glVertex3f( 0.5f,  0.00f,  0.0f);
 
         glVertex3f( 0.0f,  0.07f,  0.1f);
         glVertex3f( 0.0f,  0.00f,  0.1f);
         glColor3f(0.2f, 0.2f, 0.2f);
-        glVertex3f( 0.9f,  0.00f,  0.1f);
-        glVertex3f( 0.9f,  0.07f,  0.1f);
+        glVertex3f( 0.5f,  0.00f,  0.1f);
+        glVertex3f( 0.5f,  0.07f,  0.1f);
 
-        glVertex3f( 0.9f,  0.00f,  0.0f);
+        glVertex3f( 0.5f,  0.00f,  0.0f);
         glVertex3f( 0.0f,  0.00f,  0.0f);
         glVertex3f( 0.0f,  0.07f,  0.0f);
-        glVertex3f( 0.9f,  0.07f,  0.0f);
+        glVertex3f( 0.5f,  0.07f,  0.0f);
 
         glVertex3f( 0.0f,  0.07f,  0.1f);
         glVertex3f( 0.0f,  0.07f,  0.0f);
         glVertex3f( 0.0f,  0.00f,  0.0f);
         glVertex3f( 0.0f,  0.00f,  0.1f);
 
-        glVertex3f( 0.9f,  0.07f,  0.0f);
-        glVertex3f( 0.9f,  0.07f,  0.1f);
-        glVertex3f( 0.9f,  0.00f,  0.1f);
-        glVertex3f( 0.9f,  0.00f,  0.0f);
+        glVertex3f( 0.5f,  0.07f,  0.0f);
+        glVertex3f( 0.5f,  0.07f,  0.1f);
+        glVertex3f( 0.5f,  0.00f,  0.1f);
+        glVertex3f( 0.5f,  0.00f,  0.0f);
     glEnd();
 }
 
-static void display(void)
-{
-    const double t = glutGet(GLUT_ELAPSED_TIME) / 1000.0;
-    const double a = t*90.0;
+void gpu(){
+    glBegin(GL_QUADS);
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    glPushMatrix();
-        //glColor3d(0,0.5,0);
-        glTranslated(-0.7,-0.5,-3);
-        glRotated(-30,1,0,0);
-        mobo();
-    glPopMatrix();
-    glPushMatrix();
-        glColor3d(0,0,0);
-        glTranslated(-0.3,0.2,-3);
-        glRotated(-30,1,0,0);
-        cpu();
-    glPopMatrix();
-    glPushMatrix();
-        glColor3d(0,0,0);
-        glTranslated(0.3,0,-3);
-        glRotated(-30,1,0,0);
-        ram();
-    glPopMatrix();
-    glPushMatrix();
-        glColor3d(0,0,0);
-        glTranslated(0.45,0,-3);
-        glRotated(-30,1,0,0);
-        ram();
-    glPopMatrix();
-    glPushMatrix();
-        glColor3d(0,0,0);
-        glTranslated(-0.5,-0.3,-3);
-        glRotated(-30,1,0,0);
-        vga();
-    glPopMatrix();
+        glVertex3f( 0.7f,  0.0f,  0.4f);
+        glVertex3f( 0.0f,  0.0f,  0.4f);
+        glVertex3f( 0.0f,  0.15f,  0.4f);
+        glVertex3f( 0.7f,  0.15f,  0.4f);
 
-    glutSwapBuffers();
+        glVertex3f( 0.7f,  0.15f,  0.0f);
+        glVertex3f( 0.0f,  0.15f,  0.0f);
+        glVertex3f( 0.0f,  0.0f,  0.0f);
+        glVertex3f( 0.7f,  0.0f,  0.0f);
+
+        glVertex3f( 0.0f,  0.15f,  0.4f);
+        glVertex3f( 0.0f,  0.15f,  0.0f);
+        glVertex3f( 0.7f,  0.15f,  0.0f);
+        glVertex3f( 0.7f,  0.15f,  0.4f);
+
+        glVertex3f( 0.7f,  0.0f,  0.0f);
+        glVertex3f( 0.0f,  0.0f,  0.0f);
+        glVertex3f( 0.0f,  0.0f,  0.4f);
+        glVertex3f( 0.7f,  0.0f,  0.4f);
+
+        glVertex3f( 0.0f,  0.15f,  0.4f);
+        glVertex3f( 0.0f,  0.0f,  0.4f);
+        glVertex3f( 0.0f,  0.0f,  0.0f);
+        glVertex3f( 0.0f,  0.15f,  0.0f);
+
+        glVertex3f( 0.7f,  0.0f,  0.4f);
+        glVertex3f( 0.7f,  0.15f,  0.4f);
+        glVertex3f( 0.7f,  0.15f,  0.0f);
+        glVertex3f( 0.7f,  0.0f,  0.0f);
+    glEnd();
 }
 
+void fan(){
+    float pjg_sayap = 0.25f;
+      glPushMatrix();
+        glTranslatef(0.0f,0.0f,0.0f);
+        glRotatef(sudut_ba, 0.0f, 0.0f, 1.0f);
+        glBegin(GL_QUADS);
+          glVertex3f(0.025f,0.025f,0.0f);
+          glVertex3f(0.025f,-0.025f,0.0f);
+          glVertex3f(pjg_sayap,-0.05f,0.0f);
+          glVertex3f(pjg_sayap,0.05f,0.0f);
+        glEnd();
+        glBegin(GL_QUADS);
+          glVertex3f(0.025f,0.025f,0.0f);
+          glVertex3f(-0.025f,0.025f,0.0f);
+          glVertex3f(-0.05f,pjg_sayap,0.0f);
+          glVertex3f(0.05f,pjg_sayap,0.0f);
+        glEnd();
+        glBegin(GL_QUADS);
+          glVertex3f(-0.025f,0.025f,0.0f);
+          glVertex3f(-0.025f,-0.025f,0.0f);
+          glVertex3f(-pjg_sayap,-0.05f,0.0f);
+          glVertex3f(-pjg_sayap,0.05f,0.0f);
+        glEnd();
+        glBegin(GL_QUADS);
+          glVertex3f(-0.025f,-0.025f,0.0f);
+          glVertex3f(0.025f,-0.025f,0.0f);
+          glVertex3f(0.05f,-pjg_sayap,0.0f);
+          glVertex3f(-0.05f,-pjg_sayap,0.0f);
+        glEnd();
+      glPopMatrix();
+
+}
+
+double rotate_y = 0;
+double rotate_x = 0;
+double rotate_z = 0;
+
+float gpuZ=-0.3f;
+bool statusGPU = false;
+void copotGPU(){
+
+    if(!statusGPU){
+        statusGPU = true;
+        while(gpuZ<0.3f){
+            gpuZ+=0.1;
+        }
+    }
+    else{
+        statusGPU = false;
+        while(gpuZ>-0.3f){
+            gpuZ-=0.1;
+        }
+    }
+}
 
 static void key(unsigned char key, int x, int y)
 {
@@ -285,28 +319,115 @@ static void key(unsigned char key, int x, int y)
             exit(0);
             break;
 
-        case '+':
-            slices++;
-            stacks++;
+        case 87: //W
+            rotate_x += 5;
             break;
 
-        case '-':
-            if (slices>3 && stacks>3)
-            {
-                slices--;
-                stacks--;
-            }
+        case 83: //S
+            rotate_x -= 5;
+            break;
+
+        case 65: //A
+            rotate_y += 5;
+            break;
+
+        case 68: //D
+            rotate_y -= 5;
+            break;
+
+        case 81: //Q
+            rotate_z -= 5;
+            break;
+
+        case 69: //E
+            rotate_z += 5;
+            break;
+
+        case 86: //V
+            copotGPU();
+            if(!status_kipas)
+                status_kipas = true;
+                else
+                status_kipas = false;
             break;
     }
 
     glutPostRedisplay();
 }
 
+static void display(void)
+{
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glTranslatef(0.0f, 0.0f, -3.0f);
+    glTranslatef(-0.7,-0.5,-1);
+    glRotatef(rotate_x, 1.0,0.0,0.0);
+    glRotatef(rotate_y, 0.0,1.0,0.0);
+    glRotatef(rotate_z, 0.0,0.0,1.0);
+if(status_kipas){
+    sudut_ba = 0;
+}
+else{
+  sudut_ba += 50;
+  if(sudut_ba == 360) {
+      sudut_ba = 0;
+  }
+}
+
+    glPushMatrix();
+        glTranslatef(0,0,-0.4);
+        mobo();
+    glPopMatrix();
+    glPushMatrix();
+        glColor3d(0,0,0);
+        glTranslatef(0.3,0.7,-0.4);
+        cpu();
+    glPopMatrix();
+    glPushMatrix();
+        glColor3d(0,0,0);
+        glTranslatef(1.0,0.7,-0.4);
+        ram();
+    glPopMatrix();
+    glPushMatrix();
+        glColor3d(0,0,0);
+        glTranslatef(1.15,0.7,-0.4);
+        ram();
+    glPopMatrix();
+    glPushMatrix();
+        glColor3d(0,0,0);
+        glTranslatef(0.2,0.4 ,-0.4);
+        vga();
+    glPopMatrix();
+    glPushMatrix();
+        glColor3d(1,0,0);
+        glTranslatef(0.2,0.33,gpuZ);
+        gpu();
+    glPopMatrix();
+    glPushMatrix();
+        glColor3d(0,0,0);
+        glTranslatef(0.53,0.32,gpuZ+0.15);
+        glRotatef(90,1,0,0);
+        glRotatef(sudut_ba,0.0f,0.0f,1.0f);
+        fan();
+    glPopMatrix();
+    glFlush();
+    glutSwapBuffers();
+}
+
+
+
 static void idle(void)
 {
     glutPostRedisplay();
 }
 
+
+void timer(int value) {
+  glutPostRedisplay();
+  glutTimerFunc(15, timer, 0);
+}
 
 
 /* Program entry point */
@@ -318,19 +439,13 @@ int main(int argc, char *argv[])
     glutInitWindowPosition(10,10);
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
 
-    glutCreateWindow("GLUT Shapes");
+    glutCreateWindow("Simulasi Komputer");
 
-    glutReshapeFunc(resize);
     glutDisplayFunc(display);
     glutKeyboardFunc(key);
-    glutIdleFunc(idle);
+    glutReshapeFunc(reshape);
 
-    glClearColor(1,1,1,1);
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
-
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
+    glutTimerFunc(0, timer, 0);
     initGL();
     glutMainLoop();
 
