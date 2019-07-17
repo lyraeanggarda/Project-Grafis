@@ -19,7 +19,7 @@
 #endif
 
 #include <stdlib.h>
-float sudut_ba=0;
+float sudut_ba=0, sudut_b=0;
 boolean status_kipas = false;
 static int slices = 16;
 static int stacks = 16;
@@ -288,6 +288,53 @@ void fan(){
 
 }
 
+void psu() {
+    glBegin(GL_QUADS);
+      // Top face
+      glColor3f(0.0f, 1.0f, 0.0f);     // Green
+      glVertex3f( 0.0f, 0.5f, 0.0f);
+      glVertex3f(1.0f, 0.5f, 0.0f);
+      glVertex3f(1.0f, 0.5f,  1.0f);
+      glVertex3f( 0.0f, 0.5f,  1.0f);
+
+      // Bottom face
+      glColor3f(1.0f, 0.5f, 0.0f);     // Orange
+      glVertex3f( 0.0f, 0.0f,  0.0f);
+      glVertex3f(1.0f, 0.0f,  0.0f);
+      glVertex3f(1.0f, 0.0f, 1.0f);
+      glVertex3f( 0.0f, 0.0f, 1.0f);
+
+      // Front face
+      glColor3f(1.0f, 0.0f, 0.0f);     // Red
+      glVertex3f( 0.0f,  0.0f, 1.0f);
+      glVertex3f(0.5f,  0.0f, 1.0f);
+      glVertex3f(0.5f, 0.5f, 1.0f);
+      glVertex3f( 0.0f, 0.5f, 1.0f);
+
+//      // Back face
+      glColor3f(1.0f, 1.0f, 0.0f);     // Yellow
+      glVertex3f( 0.0f, 0.0f, 0.0f);
+      glVertex3f(1.0f, 0.0f, 0.0f);
+      glVertex3f(1.0f,  0.5f, 0.0f);
+      glVertex3f( 0.0f,  0.5f, 0.0f);
+
+//      // Left face
+      glColor3f(0.0f, 0.0f, 1.0f);     // Blue
+      glVertex3f(0.0f,  0.0f,  1.0f);
+      glVertex3f(0.0f,  0.0f, 0.0f);
+      glVertex3f(0.0f, 0.5f, 0.0f);
+      glVertex3f(0.0f, 0.5f,  1.0f);
+//
+//      // Right face
+      glColor3f(1.0f, 0.0f, 1.0f);     // Magenta
+      glVertex3f(1.0f, 0.0f, 1.0f);
+      glVertex3f(1.0f, 0.0f,  0.0f);
+      glVertex3f(1.0f, 0.5f,  0.0f);
+      glVertex3f(1.0f, 0.5f, 1.0f);
+   glEnd();
+}
+
+
 double rotate_y = 0;
 double rotate_x = 0;
 double rotate_z = 0;
@@ -375,7 +422,6 @@ else{
       sudut_ba = 0;
   }
 }
-
     glPushMatrix();
         glTranslatef(0,0,-0.4);
         mobo();
@@ -410,6 +456,18 @@ else{
         glTranslatef(0.53,0.32,gpuZ+0.15);
         glRotatef(90,1,0,0);
         glRotatef(sudut_ba,0.0f,0.0f,1.0f);
+        fan();
+    glPopMatrix();
+    glPushMatrix();
+        glTranslatef(-1.2,1,-0.6);
+        glRotatef(90,1.0f, 0.0f, 0.0f);
+        psu();
+    glPopMatrix();
+    glPushMatrix();
+        glColor3d(0,0,0);
+        glTranslatef(-0.45,0.1,-0.35);
+        glRotatef(90,1,0,0);
+        glRotatef(sudut_b,0.0f,0.0f,1.0f);
         fan();
     glPopMatrix();
     glFlush();

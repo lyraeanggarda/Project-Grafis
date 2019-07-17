@@ -5,7 +5,7 @@
 	<stdlib.h>
 	<math.h>
 
-1553314151 c:\mingw\include\gl\glut.h
+976692172 c:\mingw\include\gl\glut.h
 	<windows.h>
 	<GL/gl.h>
 	<GL/glu.h>
@@ -87,7 +87,7 @@
 1548158450 c:\mingw\include\msvcrtver.h
 	<_mingw.h>
 
-1553312636 c:\mingw\include\features.h
+1551711526 c:\mingw\include\features.h
 
 1548158450 c:\mingw\include\strings.h
 	<_mingw.h>
@@ -370,6 +370,12 @@
 	<iostream>
 
 1563354778 source:c:\users\lyrae anggarda\documents\github\project-grafis\main.cpp
+	<windows.h>
+	<GLUT/glut.h>
+	<GL/glut.h>
+	<stdlib.h>
+
+1563365776 source:c:\users\marce\documents\github\project-grafis\main.cpp
 	<windows.h>
 	<GLUT/glut.h>
 	<GL/glut.h>
