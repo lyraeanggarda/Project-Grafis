@@ -252,6 +252,13 @@ void gpu(){
         glVertex3f( 0.7f,  0.15f,  0.4f);
         glVertex3f( 0.7f,  0.15f,  0.0f);
         glVertex3f( 0.7f,  0.0f,  0.0f);
+
+        glColor3f(0.7,0.7,0);
+        glVertex3f( 0.0f,  0.1f,  0.0f);
+        glVertex3f( 0.0f,  0.1f,  -0.1f);
+//        glColor3f(1,,0);
+        glVertex3f( 0.5f,  0.1f,  -0.1f);
+        glVertex3f( 0.5f,  0.1f,  0.0f);
     glEnd();
 }
 
@@ -503,17 +510,17 @@ else{
         glColor3d(0,0,0);
         glTranslatef(-0.45,0.1,-0.35);
         glRotatef(90,1,0,0);
-        glRotatef(sudut_b,0.0f,0.0f,1.0f);
+        glRotatef(sudut_ba,0.0f,0.0f,1.0f);
         fan();
     glPopMatrix();
     glPushMatrix();
-        glTranslatef(1.01,0.75,-0.37);
+        glTranslatef(1.01,0.75,gpuZ-0.07);
         glRotatef(90,1,0,0);
         glRotatef(90,0,1,0);
         ram();
     glPopMatrix();
     glPushMatrix();
-        glTranslatef(1.17,0.75,-0.37);
+        glTranslatef(1.17,0.75,gpuZ-0.07);
         glRotatef(90,1,0,0);
         glRotatef(90,0,1,0);
         ram();
