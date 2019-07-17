@@ -150,7 +150,7 @@ void cpu(){
     glEnd();
 }
 
-void ram(){
+void slot_ram(){
     glBegin(GL_QUADS);
         glVertex3f( 0.07f,  0.7f,  0.0f);
         glVertex3f( 0.00f,  0.7f,  0.0f);
@@ -334,6 +334,42 @@ void psu() {
    glEnd();
 }
 
+void ram() {
+    glColor3f(0,1,0);
+    glBegin(GL_QUADS);
+        glVertex3f(0.0f,0.0f,0.0f);
+        glVertex3f(0.6f,0.0f,0.0f);
+        glVertex3f(0.6f,0.25f,0.0f);
+        glVertex3f(0.0f,0.25f,0.0f);
+
+        glVertex3f(0.0f,0.0f,0.04f);
+        glVertex3f(0.6f,0.0f,0.04f);
+        glVertex3f(0.6f,0.25f,0.04f);
+        glVertex3f(0.0f,0.25f,0.04f);
+
+        glVertex3f(0.0f,0.25f,0.0f);
+        glVertex3f(0.6f,0.25f,0.0f);
+        glVertex3f(0.6f,0.25f,0.04f);
+        glVertex3f(0.0f,0.25f,0.04f);
+
+        glVertex3f(0.0f,0.0f,0.0f);
+        glVertex3f(0.6f,0.0f,0.0f);
+        glVertex3f(0.6f,0.0f,0.04f);
+        glVertex3f(0.0f,0.0f,0.04f);
+
+        glVertex3f(0.0f,0.0f,0.0f);
+        glVertex3f(0.0f,0.0f,0.04f);
+        glVertex3f(0.0f,0.25f,0.04f);
+        glVertex3f(0.0f,0.25f,0.0f);
+
+        glVertex3f(0.6f,0.0f,0.0f);
+        glVertex3f(0.6f,0.0f,0.04f);
+        glVertex3f(0.6f,0.25f,0.04f);
+        glVertex3f(0.6f,0.25f,0.0f);
+
+    glEnd();
+}
+
 
 double rotate_y = 0;
 double rotate_x = 0;
@@ -434,12 +470,12 @@ else{
     glPushMatrix();
         glColor3d(0,0,0);
         glTranslatef(1.0,0.7,-0.4);
-        ram();
+        slot_ram();
     glPopMatrix();
     glPushMatrix();
         glColor3d(0,0,0);
         glTranslatef(1.15,0.7,-0.4);
-        ram();
+        slot_ram();
     glPopMatrix();
     glPushMatrix();
         glColor3d(0,0,0);
@@ -469,6 +505,18 @@ else{
         glRotatef(90,1,0,0);
         glRotatef(sudut_b,0.0f,0.0f,1.0f);
         fan();
+    glPopMatrix();
+    glPushMatrix();
+        glTranslatef(1.01,0.75,-0.37);
+        glRotatef(90,1,0,0);
+        glRotatef(90,0,1,0);
+        ram();
+    glPopMatrix();
+    glPushMatrix();
+        glTranslatef(1.17,0.75,-0.37);
+        glRotatef(90,1,0,0);
+        glRotatef(90,0,1,0);
+        ram();
     glPopMatrix();
     glFlush();
     glutSwapBuffers();
