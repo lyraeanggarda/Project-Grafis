@@ -20,7 +20,9 @@
 
 #include <stdlib.h>
 float sudut_ba=0, sudut_b=0;
+float rotate_kipas=0;
 boolean status_kipas = false;
+
 static int slices = 16;
 static int stacks = 16;
 
@@ -34,6 +36,12 @@ void initGL()
   glDepthFunc(GL_LEQUAL);
   glShadeModel(GL_SMOOTH);
   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+}
+
+
+void timer(int value) {
+  glutPostRedisplay();
+  glutTimerFunc(15, timer, 0);
 }
 
 static void resize(int width, int height)
@@ -400,6 +408,231 @@ void copotGPU(){
     }
 }
 
+//RAHAM START
+
+void GoldPin(){
+    glColor3d(0.7,0.7,0.0);
+    glTranslated(0,0,-0.03);
+    /*glRotated(90,0,0,1);
+    glTranslated(0,0,-0.1);
+    qobj = gluNewQuadric();
+    gluQuadricDrawStyle(qobj,GLU_FILL);
+    gluCylinder(qobj,0.05,0.05,0.05,30,30);*/
+
+    glBegin(GL_QUADS);
+        glVertex3f(0.02,0.02,0.0); //A
+        glVertex3f(0.02,0.04,0.0); //B
+        glVertex3f(0.04,0.04,0.0); //C
+        glVertex3f(0.04,0.02,0.0); //D
+    glEnd();
+    glBegin(GL_QUADS);
+        glVertex3f(0.02,0.02,0.05); //A+
+        glVertex3f(0.02,0.04,0.05); //B+
+        glVertex3f(0.04,0.04,0.05); //C+
+        glVertex3f(0.04,0.02,0.05); //D+
+    glEnd();
+    glBegin(GL_QUADS);
+        glVertex3f(0.02,0.02,0.0); //A
+        glVertex3f(0.02,0.04,0.0); //B
+        glVertex3f(0.02,0.04,0.05); //B+
+        glVertex3f(0.02,0.02,0.05); //A+
+
+        glVertex3f(0.04,0.04,0.0); //C
+        glVertex3f(0.04,0.02,0.0); //D
+        glVertex3f(0.04,0.02,0.05); //D+
+        glVertex3f(0.04,0.04,0.05); //C+
+
+        glVertex3f(0.02,0.04,0.0); //B
+        glVertex3f(0.04,0.04,0.0); //C
+        glVertex3f(0.04,0.04,0.05); //C+
+        glVertex3f(0.02,0.04,0.05); //B+
+
+        glVertex3f(0.02,0.02,0.0); //A
+        glVertex3f(0.04,0.02,0.0); //D
+        glVertex3f(0.04,0.02,0.05); //D+
+        glVertex3f(0.02,0.02,0.05); //A+
+    glEnd();
+}
+
+void AlasProc(){
+
+    glBegin(GL_QUADS);
+        glVertex3f(0.0f,0.0f,0.0f); //A
+        glVertex3f(0.0f,0.4f,0.0f); //B
+        glVertex3f(0.4f,0.4f,0.0f); //C
+        glVertex3f(0.4f,0.0f,0.0f); //D
+
+        glVertex3f(0.0f,0.0f,0.05f); //A+
+        glVertex3f(0.0f,0.4f,0.05f); //B+
+        glVertex3f(0.4f,0.4f,0.05f); //C+
+        glVertex3f(0.4f,0.0f,0.05f); //D+
+
+        glVertex3f(0.0f,0.0f,0.0f); //A
+        glVertex3f(0.0f,0.4f,0.0f); //B
+        glVertex3f(0.0f,0.4f,0.05f); //B+
+        glVertex3f(0.0f,0.0f,0.05f); //A+
+
+        glVertex3f(0.4f,0.4f,0.0f); //C
+        glVertex3f(0.4f,0.0f,0.0f); //D
+        glVertex3f(0.4f,0.0f,0.05f); //D+
+        glVertex3f(0.4f,0.4f,0.05f); //C+
+
+        glVertex3f(0.0f,0.4f,0.0f); //B
+        glVertex3f(0.4f,0.4f,0.0f); //C
+        glVertex3f(0.4f,0.4f,0.05f); //C+
+        glVertex3f(0.0f,0.4f,0.05f); //B+
+
+        glVertex3f(0.0f,0.0f,0.0f); //A
+        glVertex3f(0.4f,0.0f,0.0f); //D
+        glVertex3f(0.4f,0.0f,0.05f); //D+
+        glVertex3f(0.0f,0.0f,0.05f); //A+
+    glEnd();
+}
+
+void KepalaProc(){
+    glColor3d(0.3,0.3,0.3);
+    glBegin(GL_QUADS);
+        glVertex3f(0.05f,0.05f,0.05f); //A
+        glVertex3f(0.05f,0.35f,0.05f); //B
+        glVertex3f(0.35f,0.35f,0.05f); //C
+        glVertex3f(0.35f,0.05f,0.05f); //D
+
+        glVertex3f(0.05f,0.05f,0.1f); //A+
+        glVertex3f(0.05f,0.35f,0.1f); //B+
+        glVertex3f(0.35f,0.35f,0.1f); //C+
+        glVertex3f(0.35f,0.05f,0.1f); //D+
+
+        glVertex3f(0.05f,0.05f,0.05f); //A
+        glVertex3f(0.05f,0.35f,0.05f); //B
+        glVertex3f(0.05f,0.35f,0.1f); //B+
+        glVertex3f(0.05f,0.05f,0.1f); //A+
+
+        glVertex3f(0.35f,0.35f,0.05f); //C
+        glVertex3f(0.35f,0.05f,0.05f); //D
+        glVertex3f(0.35f,0.05f,0.1f); //D+
+        glVertex3f(0.35f,0.35f,0.1f); //C+
+
+        glVertex3f(0.05f,0.35f,0.05f); //B
+        glVertex3f(0.35f,0.35f,0.05f); //C
+        glVertex3f(0.35f,0.35f,0.1f); //C+
+        glVertex3f(0.05f,0.35f,0.1f); //B+
+
+        glVertex3f(0.05f,0.05f,0.05f); //A
+        glVertex3f(0.35f,0.05f,0.05f); //D
+        glVertex3f(0.35f,0.05f,0.1f); //D+
+        glVertex3f(0.05f,0.05f,0.1f); //A+
+    glEnd();
+}
+
+
+float procZ = -0.3f, heatsinkZ = -0.2f, kipasZ = 0.1f;
+bool status_proc = false;
+int panjang;
+void CopotProc(){
+    if(!status_proc){
+        status_proc = !status_proc;
+        for(panjang=0; panjang<=5; panjang++){
+            procZ+=0.1;
+            heatsinkZ +=0.15;
+        }
+        kipasZ=1.0F;
+    }
+    else{
+        status_proc = !status_proc;
+        for(panjang=0; panjang<=5; panjang++){
+            procZ-=0.1;
+            heatsinkZ -=0.15;
+        }
+        kipasZ=0.1F;
+    }
+
+
+}
+
+void Proc(){
+
+ glColor3d(0.0,0.3,0.1);
+ AlasProc();
+ KepalaProc();
+
+ float tx=0.0f,ty=0.0f;
+ for(int y=0;y<=11;y++){
+    for(int x=0;x<=11;x++){
+        glPushMatrix();
+        glTranslatef(tx,ty,0);
+        GoldPin();
+        glPopMatrix();
+        tx+=0.03;
+    }
+    tx=0.0f;
+    ty+=0.03;
+ }
+}
+
+void PinHeatSink(){
+     glBegin(GL_QUADS);
+        glVertex3f(0.0f,0.0f,0.0f);
+        glVertex3f(0.4f,0.0f,0.0f);
+        glVertex3f(0.4f,0.0f,0.3f);
+        glVertex3f(0.0f,0.0f,0.3f);
+     glEnd();
+}
+
+void Heatsink(){
+    glTranslatef(0.3f,0.7f,heatsinkZ);
+    glColor3d(0.7,0.7,0.7);
+    AlasProc();
+    float ty=0.0f;
+    for(int y=0;y<21;y++){
+        glPushMatrix();
+        glTranslatef(0,ty,0);
+            PinHeatSink();
+        glPopMatrix();
+        ty+=0.02;
+    }
+}
+
+
+void KipasCpu(){
+    glColor3d(0.2,0.2,0.2);
+    glBegin(GL_QUADS);
+        glVertex3f(0.0f,0.0f,0.0f);
+        glVertex3f(0.0f,0.0f,0.1f);
+        glVertex3f(0.15f,0.15f,0.1f);
+        glVertex3f(0.1f,0.25f,0.0f);
+    glEnd();
+    glPushMatrix();
+    glRotatef(90,0,0,1);
+    glBegin(GL_QUADS);
+         glVertex3f(0.0f,0.0f,0.0f);
+        glVertex3f(0.0f,0.0f,0.1f);
+        glVertex3f(0.15f,0.15f,0.1f);
+        glVertex3f(0.1f,0.25f,0.0f);
+    glEnd();
+    glPopMatrix();
+    glPushMatrix();
+    glRotatef(180,0,0,1);
+    glBegin(GL_QUADS);
+         glVertex3f(0.0f,0.0f,0.0f);
+        glVertex3f(0.0f,0.0f,0.1f);
+        glVertex3f(0.15f,0.15f,0.1f);
+        glVertex3f(0.1f,0.25f,0.0f);
+    glEnd();
+    glPopMatrix();
+    glPushMatrix();
+    glRotatef(270,0,0,1);
+    glBegin(GL_QUADS);
+         glVertex3f(0.0f,0.0f,0.0f);
+        glVertex3f(0.0f,0.0f,0.1f);
+        glVertex3f(0.15f,0.15f,0.1f);
+        glVertex3f(0.1f,0.25f,0.0f);
+    glEnd();
+    glPopMatrix();
+}
+
+//RAHAM END
+
+
 static void key(unsigned char key, int x, int y)
 {
     switch (key)
@@ -440,6 +673,19 @@ static void key(unsigned char key, int x, int y)
                 else
                 status_kipas = false;
             break;
+
+        case 80: //P
+             if(!status_kipas)
+                status_kipas = true;
+                else
+                status_kipas = false;
+            /*if(!status_proc)
+                status_proc = true;
+                else
+                status_proc = false;*/
+                CopotProc();
+            break;
+
     }
 
     glutPostRedisplay();
@@ -525,6 +771,43 @@ else{
         glRotatef(90,0,1,0);
         ram();
     glPopMatrix();
+
+    //Rotasi Kipas
+    if(status_kipas){
+    rotate_kipas = 0;
+    }
+    else{
+    rotate_kipas += 10;
+    if(rotate_kipas == 360) {
+        rotate_kipas = 0;
+    }
+    }
+    //Copot Proc
+    /*if(status_proc){
+
+        for(panjang=0; panjang<=5; panjang++){
+            procZ+=0.1;
+        }
+    }
+    else{
+        for(panjang=0; panjang<=5; panjang++){
+            procZ-=0.1;
+
+        }
+    }*/
+
+    glPushMatrix();
+    glTranslatef(0.3f,0.7F,procZ);
+    Proc();
+    glPopMatrix();
+    glPushMatrix();
+    Heatsink();
+    glPopMatrix();
+    glPushMatrix();
+    glTranslatef(0.5f,0.9f,kipasZ);
+    glRotatef(rotate_kipas,0.0f,0.0f,1.0f);
+    KipasCpu();
+    glPopMatrix();
     glFlush();
     glutSwapBuffers();
 }
@@ -537,10 +820,6 @@ static void idle(void)
 }
 
 
-void timer(int value) {
-  glutPostRedisplay();
-  glutTimerFunc(15, timer, 0);
-}
 
 
 /* Program entry point */
