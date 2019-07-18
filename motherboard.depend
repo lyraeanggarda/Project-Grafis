@@ -353,10 +353,11 @@
 1548158450 c:\mingw\include\math.h
 	<_mingw.h>
 
-1563413033 source:d:\uas\project-grafis\main.cpp
+1563421993 source:d:\uas\project-grafis\main.cpp
 	<windows.h>
 	<GLUT/glut.h>
 	<GL/glut.h>
+	"math.h"
 	<stdlib.h>
 
 1561385302 source:d:\uas\project-grafis\main2.cpp

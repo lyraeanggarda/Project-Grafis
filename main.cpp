@@ -17,11 +17,108 @@
 #else
 #include <GL/glut.h>
 #endif
-
+#include "math.h"
 #include <stdlib.h>
 float sudut_ba=0, sudut_b=0;
 float rotate_kipas=0;
 boolean status_kipas = false;
+float view_rotx = 0.0f, view_roty = 0.0f;
+int oldMouseX, oldMouseY;
+float Cx = 1.2, Cy = 1.10, Cz = 0.5;
+float Lx = 1, Ly = 1, Lz = 0;
+float Tx = 0, Ty = 1, Tz = 0;
+
+float sudut_x = 0.0f, sudut_y = 0.0f, sudut_z = 0.0f;
+float sudut_x2 = 0.0f, sudut_y2 = 0.0f, sudut_z2 = 0.0f;
+
+float angle_depanBelakang = 0.0f;
+float angle_depanBelakang2 = 0.0f;
+float angle_samping = 0.0f;
+float angle_samping2 = 0.0f;
+float angle_vertikal = 0.0f;
+float angle_vertikal2 = 0.0f;
+
+float toRadians(float angle){
+    return angle * M_PI / 180;
+}
+
+class Vector{
+    public: float x, y, z;
+
+    void set_values (float startX, float startY, float startZ){
+        x = startX;
+        y = startY;
+        z = startZ;
+    }
+
+    void vectorRotation(Vector refs, float angle){
+        Vector temp = refs;
+        float magnitude = sqrt(pow(temp.x, 2) + pow(temp.y, 2) + pow(temp.z, 2));
+        temp.x = temp.x / magnitude;
+        temp.y = temp.y / magnitude;
+        temp.z = temp.z / magnitude;
+        float dot_product = (x * temp.x)+(y * temp.y)+(z * temp.z);
+        float cross_product_x = (y * temp.z) - (temp.z * z);
+        float cross_product_y = -((x * temp.z) - (z * temp.x));
+        float cross_product_z = (x * temp.y) - (y * temp.x);
+        float last_factor_rodrigues = 1.0f - cos(toRadians(fmod(angle, 360.0f)));
+        x = (x * cos(toRadians(fmod(angle, 360.0f)))) + (cross_product_x * sin(toRadians(fmod(angle, 360.0f)))) + (dot_product * last_factor_rodrigues * x);
+        y = (y * cos(toRadians(fmod(angle, 360.0f)))) + (cross_product_y * sin(toRadians(fmod(angle, 360.0f)))) + (dot_product * last_factor_rodrigues * y);
+        z = (z * cos(toRadians(fmod(angle, 360.0f)))) + (cross_product_z * sin(toRadians(fmod(angle, 360.0f)))) + (dot_product * last_factor_rodrigues * z);
+    }
+};
+Vector linear, lateral, vertikal;
+
+void vectorMovement(float toMove[], float magnitude, float direction){
+    float speedX = toMove[0]*magnitude*direction;
+    float speedY = toMove[1]*magnitude*direction;
+    float speedZ = toMove[2]*magnitude*direction;
+    Cx += speedX;
+    Cy += speedY;
+    Cz += speedZ;
+    Lx += speedX;
+    Ly += speedY;
+    Lz += speedZ;
+}
+
+void cameraRotation(Vector refer, double angle){
+    float M = sqrt(pow(refer.x, 2) + pow(refer.y, 2) + pow(refer.z, 2));
+    float Up_x1 = refer.x / M;
+    float Up_y1 = refer.y / M;
+    float Up_z1 = refer.z / M;
+    float VLx = Lx - Cx;
+    float VLy = Ly - Cy;
+    float VLz = Lz - Cz;
+    float dot_product = (VLx * Up_x1) + (VLy * Up_y1) + (VLz * Up_z1);
+    float cross_product_x = (Up_y1 * VLz) - (VLy * Up_z1);
+    float cross_product_y = -((Up_x1 * VLz) - (Up_z1 * VLx));
+    float cross_product_z = (Up_x1 * VLy) - (Up_y1 * VLx);
+    float last_factor_rodrigues = 1.0f - cos(toRadians(angle));
+    float Lx1 = (VLx * cos(toRadians(angle))) + (cross_product_x * sin(toRadians(angle))) + (dot_product * last_factor_rodrigues * VLx);
+    float Ly1 = (VLy * cos(toRadians(angle))) + (cross_product_y * sin(toRadians(angle))) + (dot_product * last_factor_rodrigues * VLy);
+    float Lz1 = (VLz * cos(toRadians(angle))) + (cross_product_z * sin(toRadians(angle))) + (dot_product * last_factor_rodrigues * VLz);
+
+    Lx = Lx1+Cx;
+    Ly = Ly1+Cy;
+    Lz = Lz1+Cz;
+}
+
+void mouseControl(int button, int state, int x, int y){
+    oldMouseX = x;
+    oldMouseY = y;
+}
+
+void mouseMotion(int x, int y){
+    int getX = x;
+    int getY = y;
+    float thetaY = 360.0f*(getX - oldMouseX)/640;
+    float thetaX = 360.0f*(getY - oldMouseY)/480;
+    oldMouseX = getX;
+    oldMouseY = getY;
+    view_rotx += thetaX;
+    view_roty += thetaY;
+}
+
 
 static int slices = 16;
 static int stacks = 16;
@@ -675,14 +772,17 @@ static void key(unsigned char key, int x, int y)
             break;
 
         case 80: //P
-             if(!status_kipas)
-                status_kipas = true;
-                else
+             if(!status_kipas){
+                status_kipas = true;}
+                else{
                 status_kipas = false;
-            /*if(!status_proc)
+                }
+            /*if(!status_proc){
+                panjang = 0;
                 status_proc = true;
-                else
-                status_proc = false;*/
+                }else{
+                panjang = 0;
+                status_proc = false;}*/
                 CopotProc();
             break;
 
@@ -697,6 +797,14 @@ static void display(void)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+
+        gluLookAt(Cx, Cy, Cz, // eye pos
+                Lx, Ly, Lz, // Look At
+                Tx, Ty, Tz);  // up;
+
+    glRotatef(view_rotx, 1.0f, 0.0f, 0.0f);
+    glRotatef(view_roty, 0.0f, 1.0f, 0.0f);
+
     glTranslatef(0.0f, 0.0f, -3.0f);
     glTranslatef(-0.7,-0.5,-1);
     glRotatef(rotate_x, 1.0,0.0,0.0);
@@ -795,7 +903,19 @@ else{
 
         }
     }*/
-
+    /*
+    if(status_proc){
+        if(panjang <= 5){
+            procZ=+0.1;
+            panjang++;
+        }
+    }else{
+        if(panjang <= 5){
+            procZ=-0.1;
+            panjang++;
+        }
+    }
+*/
     glPushMatrix();
     glTranslatef(0.3f,0.7F,procZ);
     Proc();
@@ -839,6 +959,8 @@ int main(int argc, char *argv[])
 
     glutTimerFunc(0, timer, 0);
     initGL();
+    glutMouseFunc(mouseControl);
+    glutMotionFunc(mouseMotion);
     glutMainLoop();
 
     return EXIT_SUCCESS;
